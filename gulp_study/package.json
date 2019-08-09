@@ -1,0 +1,26 @@
+{
+  "name": "gulp_study",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0"
+  },
+  "devDependencies": {
+    "gulp-connect": "^5.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corvofeng/gulp_study.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/corvofeng/gulp_study/issues"
+  },
+  "homepage": "https://github.com/corvofeng/gulp_study#readme"
+}
