@@ -1,0 +1,16 @@
+
+- hosts: 127.0.0.1
+  connection: local
+  vars:
+    docker_registry_secret_name: xxx
+    docker_registry_username: xxx
+    docker_registry_pwd: xxx
+    docker_registry_server: https://index.docker.io/v1/
+    docker_registry_email: xxx@gmail.com
+
+    kubernetes_config: ~/.kube/okteto-kube.config
+    need_secret_namespaces:
+      - corvofeng
+
+  roles:
+    - docker-secrets

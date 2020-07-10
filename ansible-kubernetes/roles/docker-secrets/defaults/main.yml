@@ -1,0 +1,10 @@
+
+
+docker_registry_secret_name: dockerhub-me
+docker_registry_username: corvofeng
+docker_registry_pwd: xxx
+docker_registry_server: hub.docker.com
+docker_registry_email: corvofeng@gmail.com
+
+need_secret_namespaces:
+  - default

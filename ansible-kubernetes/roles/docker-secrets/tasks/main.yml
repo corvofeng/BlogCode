@@ -1,0 +1,16 @@
+# 创建dockerconfigjson的变量
+- set_fact:
+    dockerconfigjson: "{{ lookup('template', './secret-json.yml.j2') | to_json }}"
+
+# - debug:
+#     var:  dockerconfigjson
+
+# 根据dockerconfigjson变量生成yaml文件
+- name: upload kube-docker-secrets.yml
+  template:
+    src: templates/docker-secrets.yml.j2
+    dest: /tmp/kube-docker-secrets.yml
+
+# 进行apply操作
+- name: install docker-secretes
+  shell: KUBECONFIG={{kubernetes_config}} kubectl apply -f /tmp/kube-docker-secrets.yml
