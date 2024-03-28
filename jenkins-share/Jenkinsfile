@@ -1,17 +1,36 @@
 node {
-    stage "Create build output"
+    stage ('test func') {
+        // https://stackoverflow.com/a/16922421
+        def f = { 
+          Object... args -> 
+            print "There are: "; 
+            print args.size(); 
+            println " arguments and they are: "; 
+            args.each { println it }; 
+            println "DONE" 
+        }
+
+        def x = new int[2];
+        x[0] = 1;
+        x[1] = 2;
+
+        f(1,2); // 1
+        f([1,2]); // 2
+        f(a:x); // <--- used label 'a', or anything else 
+    }
+//     stage "Create build output"
+
+//     // Make the output directory.
+//     sh "mkdir -p output"
+
+//     // Write an useful file, which is needed to be archived.
+//     writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+
+//     // Write an useless file, which is not needed to be archived.
+//     writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+
+//     stage "Archive build output"
     
-    // Make the output directory.
-    sh "mkdir -p output"
-
-    // Write an useful file, which is needed to be archived.
-    writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
-
-    // Write an useless file, which is not needed to be archived.
-    writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
-
-    stage "Archive build output"
-    
-    // Archive the build output artifacts.
-    archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
+//     // Archive the build output artifacts.
+//     archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
 }
