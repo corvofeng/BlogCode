@@ -1,4 +1,55 @@
+
+
+def retryWrapper(Closure job) {
+    def varFunc = { func, Object... args ->
+        args.each { println it }
+        println "args ${args}, ${args.getClass()}, ${args.size()}"
+        func.call(*args)
+    }
+    return varFunc.curry(job)
+
+    // def func = { Object[] args ->
+    //     args.each { println it }
+    //     waitUntil {
+    //         try {
+    //             println "args ${args}, ${args.getClass()}, ${args.size()}"
+    //             // 将 job 闭包包装在一个匿名函数中，该函数接受可变数量的参数
+    //             job.call(*args)
+    //             true
+    //         } catch (error) {
+    //             println error
+    //             input 'Retry the job ?'
+    //             false
+    //         }
+    //     }
+    // }
+    // println func.getClass()
+    // return func
+}
+
 node {
+    stage('Retry Wrapper') {
+        def myClosure = { Object... args ->
+            args.each { a ->
+                println a
+            }
+        }
+        myClosure('Param1', 'Param2', 'Param3')
+
+        println arg.class
+        def xx = { a,b,c ->
+            println "a ${a}"
+            println "b ${b}"
+            println "c ${c}"
+        }
+        def func = retryWrapper(xx)
+        func(["cc", arg, arg])
+        func("cc", arg, arg)
+        // xx("cc", arg, arg)
+        // xx(["cc", arg, arg])
+    }
+
+
     stage ('test func') {
         // https://stackoverflow.com/a/16922421
         def f = { 
