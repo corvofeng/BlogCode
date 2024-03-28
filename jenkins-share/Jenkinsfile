@@ -36,6 +36,7 @@ node {
         }
         myClosure('Param1', 'Param2', 'Param3')
 
+        def arg = ["Groovy":"Java","Python":"nodeJS", "cc": ["yy": "zz"]]
         println arg.class
         def xx = { a,b,c ->
             println "a ${a}"
