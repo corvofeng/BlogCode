@@ -1,88 +1,154 @@
-
-
-def retryWrapper(Closure job) {
+def testWrapper(Closure job) {
     def varFunc = { func, Object... args ->
         args.each { println it }
         println "args ${args}, ${args.getClass()}, ${args.size()}"
         func.call(*args)
     }
     return varFunc.curry(job)
+}
 
-    // def func = { Object[] args ->
-    //     args.each { println it }
-    //     waitUntil {
-    //         try {
-    //             println "args ${args}, ${args.getClass()}, ${args.size()}"
-    //             // 将 job 闭包包装在一个匿名函数中，该函数接受可变数量的参数
-    //             job.call(*args)
-    //             true
-    //         } catch (error) {
-    //             println error
-    //             input 'Retry the job ?'
-    //             false
-    //         }
-    //     }
-    // }
-    // println func.getClass()
-    // return func
+
+def retryWrapper(Closure job) {
+    def func = { Object[] args ->
+        waitUntil {
+            try {
+                println "args ${args}, ${args.getClass()}, ${args.size()}"
+                job.call(*args)
+                true
+            } catch (error) {
+                println error
+                input 'Retry the job ?'
+                false
+            }
+        }
+    }
+    return func
 }
 
 node {
-    stage('Retry Wrapper') {
-        def myClosure = { Object... args ->
-            args.each { a ->
-                println a
+    stage('run-parallel-branches') {
+        parallel(
+          a: {
+            echo "This is branch a"
+          },
+          b: {
+            echo "This is branch b"
+          }
+        )
+    }
+
+    stage('looper-parallel-branches') {
+        def looper = [:]
+        for (int i = 0; i < 5; i++) {
+            looper["${i}"] = {
+                echo "This is branch ${i}"
             }
         }
-        myClosure('Param1', 'Param2', 'Param3')
-
-        def arg = ["Groovy":"Java","Python":"nodeJS", "cc": ["yy": "zz"]]
-        println arg.class
-        def xx = { a,b,c ->
-            println "a ${a}"
-            println "b ${b}"
-            println "c ${c}"
-        }
-        def func = retryWrapper(xx)
-        func(["cc", arg, arg])
-        // func("cc", arg, arg)
-        // xx("cc", arg, arg)
-        // xx(["cc", arg, arg])
+        parallel looper
     }
 
-
-    stage ('test func') {
-        // https://stackoverflow.com/a/16922421
-        def f = { 
-          Object... args -> 
-            print "There are: "; 
-            print args.size(); 
-            println " arguments and they are: "; 
-            args.each { println it }; 
-            println "DONE" 
+    stage('retry') {
+        testJob = { ->
+            // generate number between 40 and 99
+            def num = Math.abs( new Random().nextInt() % (99 - 40) ) + 40
+            if(num % 2 == 0) {
+                throw new Exception("Even number")
+            }
         }
 
-        def x = new int[2];
-        x[0] = 1;
-        x[1] = 2;
+        retryFunc = { job ->
+            waitUntil {
+                try {
+                    job()
+                    true
+                } catch (error) {
+                    println error
+                    input 'Retry the job ?'
+                    false
+                }
+            }
+        }
 
-        // f(1,2); // 1
-        f([1,2]); // 2
-        // f(a:x); // <--- used label 'a', or anything else 
+        def looper = [:]
+            for (int i = 0; i < 5; i++) {
+            looper["${i}"] = {
+                retryFunc(testJob)
+            }
+        }
+        // parallel looper
     }
-//     stage "Create build output"
 
-//     // Make the output directory.
-//     sh "mkdir -p output"
+    def workNodes = ['192.168.1.1', '192.168.1.2', '192.168.1.3']
+    stage('Action') {
+        stage('action 1') {
+            def looper = [:]
+            workNodes.each { node ->
+                looper["Action1 for ${node}"] = {
+                    println "action1 on $node"
+                }
+            }
+            parallel looper
+        }
+        
+        stage('action 2') {
+            def looper = [:]
+            workNodes.each { node ->
+                looper["Action2 for ${node}"] = {
+                    println "action2 on $node"
+                }
+            }
+            parallel looper
+        }
+    }
+    stage("Action Runner") {
+        def actionRunner = { msg, nodes, action ->
+            def looper = [:]
+            nodes.each { node ->
+                looper["${msg} -- ${node}"] = {
+                    stage("${msg} -- ${node}") {
+                        action(node)
+                    }
+                }
+            }
+            parallel looper
+        }
 
-//     // Write an useful file, which is needed to be archived.
-//     writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+        actionRunner("action1", workNodes, { node ->
+            println "action1 on $node"
+        })
 
-//     // Write an useless file, which is not needed to be archived.
-//     writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+        actionRunner("action2", workNodes, { node ->
+            println "action2 on $node"
+        })
 
-//     stage "Archive build output"
-    
-//     // Archive the build output artifacts.
-//     archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
+    }
+
+    stage('Retry Wrapper Error') {
+        // def xx = { a,b,c ->
+        //     println "a ${a}"
+        //     println "b ${b}"
+        //     println "c ${c}"
+        // }
+        // def func = testWrapper(xx)
+        // func("aa", "bb", "cc")
+    }
+
+    stage('Retry Wrapper') {
+        testJob = retryWrapper({ arg1, arg2 ->
+            // generate number between 40 and 99
+            println("${arg1}, ${arg2}")
+            def num = Math.abs( new Random().nextInt() % (99 - 40) ) + 40
+            if(num % 2 == 0) {
+                throw new Exception("Even number")
+            }
+        })
+
+        def looper = [:]
+        for (int i = 0; i < 5; i++) {
+            looper["${i}"] = {
+                testJob(["arg1", i])
+            }
+        }
+        parallel looper
+    }
 }
