@@ -8,8 +8,6 @@ def testWrapper(Closure job) {
 }
 
 
-
-
 def retryWrapper(Closure job) {
     def func = { Object[] args ->
         waitUntil {
