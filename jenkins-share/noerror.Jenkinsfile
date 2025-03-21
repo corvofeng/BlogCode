@@ -25,7 +25,6 @@ def retryWrapper(Closure job) {
 }
 
 node {
-
     gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started')
     setGitHubPullRequestStatus context: 'init', message: '', state: 'PENDING'
 
