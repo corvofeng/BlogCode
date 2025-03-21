@@ -7,7 +7,6 @@ def testWrapper(Closure job) {
     return varFunc.curry(job)
 }
 
-
 def retryWrapper(Closure job) {
     def func = { Object[] args ->
         waitUntil {
