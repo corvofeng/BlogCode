@@ -10,6 +10,16 @@ podTemplate(
     node(POD_LABEL) {
         stage('Get a Golang project') {
             // git url: 'https://github.com/hashicorp/terraform.git', branch: 'main'
+
+            container('agent') {
+                stage('Build docker project') {
+                    sh '''
+                    docker version
+                    docker images
+                    ''''
+                }
+            }
+
             container('golang') {
                 stage('Build a Go project') {
                     sh '''
