@@ -2,6 +2,10 @@
 podTemplate(
   agentContainer: 'agent',
   agentInjection: true,
+  envVars: [
+    envVar(key: 'DOCKER_HOST', value: 'tcp://tcp-gitea-docker-builder:2376'),
+    envVar(key: 'DOCKER_TLS_VERIFY', value: ''),
+  ],
   containers: [
     // containerTemplate(name: 'maven', image: 'maven:3.9.9-eclipse-temurin-17'),
     // containerTemplate(args: '9999999', command: 'sleep', image: 'jenkins/inbound-agent:3301.v4363ddcca_4e7-1-alpine3.21', name: 'agent', workingDir: '/home/jenkins/agent'),
