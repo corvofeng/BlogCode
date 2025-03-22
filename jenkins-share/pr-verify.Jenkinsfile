@@ -3,8 +3,8 @@ node {
     // setGitHubPullRequestStatus context: 'init', message: 'jenkins start', state: 'PENDING'
 
     stage('run-parallel-branches') {
-        // echo "in pr branch ${GITHUB_PR_SOURCE_BRANCH}"
-        checkout scmGit(branches: [[name: "*/${params.GITHUB_PR_SOURCE_BRANCH}"]])
+        echo "in pr branch ${params.GITHUB_PR_SOURCE_BRANCH}"
+        // checkout scmGit(branches: [[name: "*/${params.GITHUB_PR_SOURCE_BRANCH}"]])
 
         parallel(
           a: {
