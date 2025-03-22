@@ -28,6 +28,7 @@ node {
     // gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started')
     // setGitHubPullRequestStatus context: 'init', message: '', state: 'PENDING'
     stage('run-parallel-branches') {
+        checkout scm
         parallel(
           a: {
             echo "This is branch a"
