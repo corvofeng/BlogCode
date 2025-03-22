@@ -127,7 +127,7 @@ node {
 
     }
 
-
+    /*
     stage('Retry Wrapper') {
         testJob = retryWrapper({ arg1, arg2 ->
             // generate number between 40 and 99
@@ -146,4 +146,5 @@ node {
         }
         // parallel looper
     }
+    */
 }
