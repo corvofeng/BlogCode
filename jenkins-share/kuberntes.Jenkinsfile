@@ -9,7 +9,7 @@
 
 
 podTemplate(
-  agentContainer: 'maven',
+  agentContainer: 'agent',
   agentInjection: true,
   containers: [
     // containerTemplate(name: 'maven', image: 'maven:3.9.9-eclipse-temurin-17'),
