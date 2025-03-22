@@ -1,6 +1,6 @@
 
 node {
-    setGitHubPullRequestStatus context: 'init', message: 'jenkins start', state: 'PENDING'
+    // setGitHubPullRequestStatus context: 'init', message: 'jenkins start', state: 'PENDING'
 
     stage('run-parallel-branches') {
         // echo "in pr branch ${GITHUB_PR_SOURCE_BRANCH}"
