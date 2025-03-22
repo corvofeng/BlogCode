@@ -1,6 +1,7 @@
 
 node {
     stage('run-parallel-branches') {
+        echo "in pr branch ${GITHUB_PR_SOURCE_BRANCH}"
         parallel(
           a: {
             echo 'This is branch a'
@@ -11,7 +12,7 @@ node {
         )
     }
 
-    stage('Maven Install') {
+    stage('docker status') {
       sh '''
       docker pull nginx
       '''
