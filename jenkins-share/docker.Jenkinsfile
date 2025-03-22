@@ -16,4 +16,7 @@ node {
       docker pull nginx
       '''
     }
+
+    // set github status success
+    setGitHubPullRequestStatus context: '', message: '', state: 'SUCCESS'
 }
