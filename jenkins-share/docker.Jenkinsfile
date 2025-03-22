@@ -12,10 +12,8 @@ node {
     }
 
     stage('Maven Install') {
-      steps {
-        sh '''
-        docker pull nginx
-        '''
-      }
+      sh '''
+      docker pull nginx
+      '''
     }
 }
