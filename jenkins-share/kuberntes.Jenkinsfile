@@ -14,7 +14,6 @@ podTemplate(
     node(POD_LABEL) {
         stage('Get a docker project') {
             // git url: 'https://github.com/hashicorp/terraform.git', branch: 'main'
-
             container('agent') {
                 stage('Build docker project') {
                     sh '''
