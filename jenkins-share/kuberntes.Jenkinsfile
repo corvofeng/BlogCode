@@ -16,7 +16,7 @@ podTemplate(
                     sh '''
                     docker version
                     docker images
-                    ''''
+                    '''
                 }
             }
 
