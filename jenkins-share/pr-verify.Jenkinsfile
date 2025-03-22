@@ -1,7 +1,7 @@
 
 node {
     stage('run-parallel-branches') {
-        echo "in pr branch ${GITHUB_PR_SOURCE_BRANCH}"
+        // echo "in pr branch ${GITHUB_PR_SOURCE_BRANCH}"
         checkout scm
 
         parallel(
