@@ -1,5 +1,6 @@
 /* groovylint-disable MethodReturnTypeRequired */
 /* groovylint-disable MethodParameterTypeRequired */
+/* groovylint-disable-next-line NoDef */
 def call(body) {
     podTemplate(
         agentContainer: 'agent',
