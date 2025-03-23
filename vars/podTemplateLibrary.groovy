@@ -1,3 +1,5 @@
+/* groovylint-disable MethodReturnTypeRequired */
+/* groovylint-disable MethodParameterTypeRequired */
 def call(body) {
     podTemplate(
         agentContainer: 'agent',
@@ -10,6 +12,10 @@ def call(body) {
             containerTemplate(args: '9999999', command: 'sleep', image: 'jenkins/jnlp-agent-docker:latest', name: 'agent', workingDir: '/home/jenkins/agent'),
             containerTemplate(name: 'golang', image: 'golang:1.24.1', command: 'sleep', args: '99d')
         ]) {
-        body()
+        node(POD_LABEL) {
+            container('agent') {
+                body()
+            }
+        }
     }
 }
