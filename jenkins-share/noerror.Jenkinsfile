@@ -39,7 +39,7 @@ node {
                 d: {
                     echo "This is branch d"
                 },
-            }
+            },
           },
           b: {
             echo "This is branch b"
