@@ -32,6 +32,25 @@ node {
             parallel (
                 c: {
                     echo "This is branch c"
+
+            stage("second") {
+            parallel(
+              "second1": {
+                stage("second1.1"){
+                echo "second1.1"
+                }
+                stage("second1.2"){
+                echo "second1.2"
+                }
+              },
+              "second2": {
+                stage("second2.1"){
+                echo "second2.1"
+                }
+              }
+            )
+            }
+
                 },
                 d: {
                     echo "This is branch d"
