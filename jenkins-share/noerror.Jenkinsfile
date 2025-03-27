@@ -27,14 +27,8 @@ def retryWrapper(Closure job) {
 node {
     // gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started')
     // setGitHubPullRequestStatus context: 'init', message: '', state: 'PENDING'
-    stage('run-parallel-branches') {
-        checkout scm
-        parallel(
-          a: {
-            echo "This is branch a"
+
             stage('run-parallel-branches inside a') {
-
-
             parallel (
                 c: {
                     echo "This is branch c"
@@ -44,6 +38,12 @@ node {
                 }
             )
           }
+    stage('run-parallel-branches') {
+        checkout scm
+        parallel(
+          a: {
+            echo "This is branch a"
+
           },
           b: {
             echo "This is branch b"
