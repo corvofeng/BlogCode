@@ -36,12 +36,17 @@ node {
             stage("second") {
             parallel(
               "second1": {
-                stage("second1.1"){
+                parallel (
+
+
+                '1': stage("second1.1"){
                 echo "second1.1"
                 }
-                stage("second1.2"){
+                '2': stage("second1.2"){
                 echo "second1.2"
                 }
+
+)
               },
               "second2": {
                 stage("second2.1"){
