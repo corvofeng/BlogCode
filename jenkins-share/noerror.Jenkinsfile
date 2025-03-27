@@ -32,14 +32,15 @@ node {
         parallel(
           a: {
             echo "This is branch a"
-            parallel {
+    
+            parallel (
                 c: {
                     echo "This is branch c"
                 },
                 d: {
                     echo "This is branch d"
                 },
-            },
+            ),
           },
           b: {
             echo "This is branch b"
