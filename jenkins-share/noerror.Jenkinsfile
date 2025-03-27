@@ -41,7 +41,7 @@ node {
 
                 '1': stage("second1.1"){
                 echo "second1.1"
-                }
+                },
                 '2': stage("second1.2"){
                 echo "second1.2"
                 }
