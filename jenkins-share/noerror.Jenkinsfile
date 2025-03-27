@@ -38,13 +38,12 @@ node {
               "second1": {
                 parallel (
 
-
-                '1': stage("second1.1"){
+                's1': { stage("second1.1"){
                 echo "second1.1"
-                },
-                '2': stage("second1.2"){
+                }},
+                's2': { stage("second1.2"){
                 echo "second1.2"
-                }
+                }}
 
 )
               },
