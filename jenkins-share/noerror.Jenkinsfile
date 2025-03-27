@@ -32,7 +32,7 @@ node {
         parallel(
           a: {
             echo "This is branch a"
-            stage('inside a') {
+            stage('run-parallel-branches inside a') {
 
 
             parallel (
