@@ -32,7 +32,9 @@ node {
         parallel(
           a: {
             echo "This is branch a"
-    
+            stage('inside a') {
+
+
             parallel (
                 c: {
                     echo "This is branch c"
@@ -41,6 +43,7 @@ node {
                     echo "This is branch d"
                 }
             )
+          }
           },
           b: {
             echo "This is branch b"
