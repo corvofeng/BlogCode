@@ -26,7 +26,7 @@ def retryWrapper(Closure job) {
 
 node {
 
-stage {
+stage('init') {
     matrix {
         axes {
             axis {
@@ -60,7 +60,9 @@ stage {
                    }
                 }
             }
-     }
+        }
+      }
+    }
 }
 
     stage('run-parallel first') {
