@@ -25,7 +25,7 @@ def retryWrapper(Closure job) {
 }
 
 node {
-    stage('run-parallel-branches inside a') {
+    stage('run-parallel first') {
         parallel(
             c: {
                 echo 'This is branch c'
@@ -38,10 +38,16 @@ node {
                                     stage('second1.1') {
                                         echo 'second1.1'
                                     }
-                                },
-                                's2': {
                                     stage('second1.2') {
                                         echo 'second1.2'
+                                    }
+                                },
+                                's2': {
+                                    stage('second2.1') {
+                                        echo 'second2.1'
+                                    }
+                                    stage('second2.2') {
+                                        echo 'second2.2'
                                     }
                                 }
                             )
