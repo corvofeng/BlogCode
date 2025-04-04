@@ -25,6 +25,48 @@ def retryWrapper(Closure job) {
 }
 
 node {
+
+    stages {
+        stage('Parallel Groups') {
+            parallel {
+                stage('Group A') {
+                    parallel {
+                        stage('Task A1') {
+                            steps {
+                                echo 'Running Task A1'
+                            }
+                        }
+                        stage('Task A2') {
+                            steps {
+                                echo 'Running Task A2'
+                            }
+                        }
+                    }
+                }
+
+                stage('Group B') {
+                    parallel {
+                        stage('Task B1') {
+                            steps {
+                                echo 'Running Task B1'
+                            }
+                        }
+                        stage('Task B2') {
+                            steps {
+                                echo 'Running Task B2'
+                            }
+                        }
+                        stage('Task B3') {
+                            steps {
+                                echo 'Running Task B3'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     stage('run-parallel-branches inside a') {
         parallel(
             c: {
