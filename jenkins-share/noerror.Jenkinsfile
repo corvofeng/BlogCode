@@ -28,7 +28,7 @@ node {
 
         stage('Parallel Groups') {
             parallel {
-                "group-a": {
+                groupA: {
                     stage('Group A') {
                     parallel {
                         stage('Task A1') {
@@ -46,7 +46,7 @@ node {
                 },
 
 
-                "group-b": {stage('Group B') {
+                groupB: {stage('Group B') {
                     parallel {
                         stage('Task B1') {
                             steps {
