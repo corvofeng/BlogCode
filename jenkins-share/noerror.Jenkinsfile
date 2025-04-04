@@ -39,7 +39,7 @@ stage {
                when { expression { env.ORIGAXIS == "ALPHA" } }
                steps {
                    alpha()
-               }           
+               }
            stage ("beta") {
                when { expression { env.ORIGAXIS == "BETA" } }
                steps {
@@ -53,10 +53,10 @@ stage {
                }
                stages {
                    stage("First") {
-                      originalFirst( ...)
+                      echo 'First'
                     }
                    stage("Second") {
-                      originalSecond(...)
+                      echo 'Second'
                    }
                 }
             }
