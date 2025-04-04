@@ -25,46 +25,8 @@ def retryWrapper(Closure job) {
 }
 
 node {
-
-stage('init') {
-    matrix {
-        axes {
-            axis {
-                name 'ORIGAXIS'
-                values 'ALPHA','BETA','BAR','BAZ'
-            }
-        }
-        stages {
-           stage ("alpha") {
-               when { expression { env.ORIGAXIS == "ALPHA" } }
-               steps {
-                   alpha()
-               }
-           stage ("beta") {
-               when { expression { env.ORIGAXIS == "BETA" } }
-               steps {
-                   beta()
-               }
-           }
-           stage ("Tests") {
-               when { allOf
-                   expression { env.ORIGAXIS != "ALPHA" }
-                   expression { env.ORIGAXIS != "BETA" }
-               }
-               stages {
-                   stage("First") {
-                      echo 'First'
-                    }
-                   stage("Second") {
-                      echo 'Second'
-                   }
-                }
-            }
-        }
-      }
-    }
-}
-
+    // nested parallel
+    // https://github.com/jenkinsci/pipeline-graph-view-plugin/issues/51#issuecomment-2218219307
     stage('run-parallel first') {
         parallel(
             c: {
