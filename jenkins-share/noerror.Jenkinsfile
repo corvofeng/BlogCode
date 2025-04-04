@@ -26,7 +26,6 @@ def retryWrapper(Closure job) {
 
 node {
 
-    stages {
         stage('Parallel Groups') {
             parallel {
                 stage('Group A') {
@@ -65,7 +64,6 @@ node {
                 }
             }
         }
-    }
 
     stage('run-parallel-branches inside a') {
         parallel(
