@@ -25,6 +25,24 @@ def retryWrapper(Closure job) {
 }
 
 node {
+    matrix {
+    axes {
+        axis {
+            name 'PLATFORM'
+            values 'linux', 'mac', 'windows'
+        }
+        axis {
+            name 'BROWSER'
+            values 'chrome', 'edge', 'firefox', 'safari'
+        }
+    }
+    stages {
+        stage('build-and-test') {
+            // ...
+        }
+    }
+}
+
     stage('run-parallel first') {
         parallel(
             c: {
