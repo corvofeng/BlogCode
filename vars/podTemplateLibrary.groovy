@@ -1,7 +1,7 @@
 /* groovylint-disable MethodReturnTypeRequired */
 /* groovylint-disable MethodParameterTypeRequired */
 /* groovylint-disable-next-line NoDef */
-def call(image='jenkins/jnlp-agent-docker:latest', body) {
+def call(image='golang:1.24.1', body) {
     podTemplate(
         agentContainer: 'agent',
         agentInjection: true,
@@ -10,8 +10,8 @@ def call(image='jenkins/jnlp-agent-docker:latest', body) {
             envVar(key: 'DOCKER_TLS_VERIFY', value: ''),
         ],
         containers: [
-            containerTemplate(args: '9999999', command: 'sleep', image: image, name: 'agent', workingDir: '/home/jenkins/agent'),
-            containerTemplate(name: 'golang', image: 'golang:1.24.1', command: 'sleep', args: '99d')
+            containerTemplate(args: '9999999', command: 'sleep', image: 'jenkins/jnlp-agent-docker:latest', name: 'agent', workingDir: '/home/jenkins/agent'),
+            containerTemplate(name: 'runner', image: image, command: 'sleep', args: '99d')
         ]) {
         node(POD_LABEL) {
             container('agent') {
