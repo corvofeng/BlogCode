@@ -14,8 +14,8 @@ node('jenkins-agents') {
       pipelineTriggers([
         parameterizedCron('''
             0 0 1 * * %task=refresh
-            */2 * * * * %GREETING=Hola;PLANET=Pluto
-            */3 * * * * %PLANET=Mars
+            0 1 * * * %GREETING=Hola;PLANET=Pluto
+            0 2 * * * %PLANET=Mars
         ''')
       ])
     ])
