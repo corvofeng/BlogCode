@@ -4,7 +4,7 @@
 
 // https://plugins.jenkins.io/parameterized-scheduler/
 // Example: https://jenkins.in.corvo.fun/job/BlogCodeSharing/job/CronJobWork/
-node {
+node('jenkins-agents') {
     properties([
       parameters([
         string(name: 'PLANET', defaultValue: 'Earth', description: 'Which planet are we on?'),
