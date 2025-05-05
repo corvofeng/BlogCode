@@ -1,8 +1,10 @@
+
+/* groovylint-disable-next-line */
 @Library('jenkins-pod') _
 
 // https://plugins.jenkins.io/parameterized-scheduler/
 // Example: https://jenkins.in.corvo.fun/job/BlogCodeSharing/job/CronJobWork/
-podTemplateLibrary body={
+node {
     properties([
       parameters([
         string(name: 'PLANET', defaultValue: 'Earth', description: 'Which planet are we on?'),
