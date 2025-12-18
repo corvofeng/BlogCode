@@ -41,13 +41,15 @@ def call(Map config = [:]) {
     def url = "https://api.github.com/repos/${repo}/issues/${pr}/comments"
 
     def payload = groovy.json.JsonOutput.toJson([body: message])
-    def authHeader = "Authorization: token ${token}"
 
-    try {
-        def resp = sh(script: "curl -s -X POST -H \"${authHeader}\" -H \"Content-Type: application/json\" -d '${payload}' '${url}'", returnStdout: true).trim()
-        echo "PR comment response: ${resp}"
-        return resp
-    } catch (err) {
-        error "Failed to post PR comment: ${err}"
+    withCredentials([string(credentialsId: token, variable: 'GH_TOKEN')]) {
+        def authHeader = "Authorization: token ${GH_TOKEN}"
+        try {
+            def resp = sh(script: "curl -s -X POST -H \"${authHeader}\" -H \"Content-Type: application/json\" -d '${payload}' '${url}'", returnStdout: true).trim()
+            echo "PR comment response: ${resp}"
+            return resp
+        } catch (err) {
+            error "Failed to post PR comment: ${err}"
+        }
     }
 }
