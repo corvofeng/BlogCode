@@ -33,6 +33,8 @@ def call(Map config = [:]) {
     if (messageFile) {
         try {
             message = readFile(messageFile)
+            echo "Read PR comment message from file '${messageFile}'."
+            echo message
         } catch (err) {
             error "Failed to read messageFile '${messageFile}': ${err}"
         }
