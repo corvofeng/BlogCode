@@ -7,13 +7,15 @@ Usage examples (place in a Jenkinsfile or shared-library step):
 // 2) Explicit repository, PR and token:
 //    addPrComment(repo: 'owner/repo', pr: '123', token: env.GIT_TOKEN, message: 'LGTM!')
 
-// 3) From a scripted pipeline step (returns API response):
-//    def resp = addPrComment(repo: 'owner/repo', pr: '123', token: env.GIT_TOKEN, message: 'See report')
+// 3) Use `messageFile` to read a file (useful for long reports):
+//    addPrComment(repo: 'owner/repo', pr: '123', token: env.GIT_TOKEN, messageFile: 'build/report.txt')
 
 // Notes:
 // - `repo` should be in the form 'owner/repo'.
 // - `token` must be a GitHub personal access token with `repo` scope (or appropriate scopes for the target repo).
 // - `pr` may be the pull request number (string or integer). If running in a multibranch PR job, `CHANGE_ID` can be used.
+// - This implementation always sends the JSON payload by writing a temporary payload file
+//   and posting it with `curl --data-binary @<file>` to avoid quoting/encoding issues.
 */
 
 /* groovylint-disable MethodReturnTypeRequired */
@@ -24,6 +26,16 @@ def call(Map config = [:]) {
     def pr = config.pr ?: env.CHANGE_ID
     def token = config.token ?: env.GIT_TOKEN
     def message = config.message ?: config.comment ?: ''
+
+    // If `messageFile` is provided, read its contents and use that as the message.
+    // `messageFile` takes precedence over `message`/`comment` when present.
+    if (config.messageFile) {
+        try {
+            message = readFile(config.messageFile).trim()
+        } catch (err) {
+            error "Failed to read messageFile '${config.messageFile}': ${err}"
+        }
+    }
 
     if (!repo) {
         error 'Missing `repo` (owner/repo). Provide config.repo or env.GIT_REPO.'
@@ -40,16 +52,30 @@ def call(Map config = [:]) {
 
     def url = "https://api.github.com/repos/${repo}/issues/${pr}/comments"
 
-    def payload = groovy.json.JsonOutput.toJson([body: message])
+    // def payload = groovy.json.JsonOutput.toJson([body: message])
+    def payload = message;
+
+    // Always use a temporary payload file and post with --data-binary to avoid
+    // shell quoting problems for large or complex JSON bodies.
+    def uuid = java.util.UUID.randomUUID().toString().replaceAll('-', '')
+    def payloadPath = "payload-${env.BUILD_ID ?: 'local'}-${uuid}.json"
 
     withCredentials([string(credentialsId: token, variable: 'GH_TOKEN')]) {
         def authHeader = "Authorization: token ${GH_TOKEN}"
         try {
-            def resp = sh(script: "curl -s -X POST -H \"${authHeader}\" -H \"Content-Type: application/json\" -d '${payload}' '${url}'", returnStdout: true).trim()
+            writeFile file: payloadPath, text: payload
+            def resp = sh(script: "curl -s -X POST -H \"${authHeader}\" -H \"Content-Type: application/json\" --data-binary @${payloadPath} '${url}'", returnStdout: true).trim()
             echo "PR comment response: ${resp}"
             return resp
         } catch (err) {
             error "Failed to post PR comment: ${err}"
+        } finally {
+            // best-effort cleanup of the temporary file
+            try {
+                sh(script: "rm -f ${payloadPath}", returnStdout: false)
+            } catch (_e) {
+                echo "Warning: failed to remove temporary payload file ${payloadPath}: ${_e}"
+            }
         }
     }
 }
