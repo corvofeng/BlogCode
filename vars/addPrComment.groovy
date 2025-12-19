@@ -28,6 +28,10 @@ def call(Map config = [:]) {
     def message = config.message ?: config.comment ?: ''
     def messageFile = config.messageFile ?: ''
 
+    sh '''
+    pwd
+    ls -alh
+    '''
     // If `messageFile` is provided, read its contents and use that as the message.
     // `messageFile` takes precedence over `message`/`comment` when present.
     if (messageFile) {
