@@ -52,8 +52,7 @@ def call(Map config = [:]) {
 
     def url = "https://api.github.com/repos/${repo}/issues/${pr}/comments"
 
-    // def payload = groovy.json.JsonOutput.toJson([body: message])
-    def payload = message;
+    def payload = message
 
     // Always use a temporary payload file and post with --data-binary to avoid
     // shell quoting problems for large or complex JSON bodies.
