@@ -26,14 +26,15 @@ def call(Map config = [:]) {
     def pr = config.pr ?: env.CHANGE_ID
     def token = config.token ?: env.GIT_TOKEN
     def message = config.message ?: config.comment ?: ''
+    def messageFile = config.messageFile ?: ''
 
     // If `messageFile` is provided, read its contents and use that as the message.
     // `messageFile` takes precedence over `message`/`comment` when present.
-    if (config.messageFile) {
+    if (messageFile) {
         try {
-            message = readFile(config.messageFile).trim()
+            message = readFile(messageFile)
         } catch (err) {
-            error "Failed to read messageFile '${config.messageFile}': ${err}"
+            error "Failed to read messageFile '${messageFile}': ${err}"
         }
     }
 
@@ -50,19 +51,23 @@ def call(Map config = [:]) {
         error 'Missing `message`. Provide config.message or config.comment.'
     }
 
-    def url = "https://api.github.com/repos/${repo}/issues/${pr}/comments"
-
-    def payload = message
-
     // Always use a temporary payload file and post with --data-binary to avoid
     // shell quoting problems for large or complex JSON bodies.
     def uuid = java.util.UUID.randomUUID().toString().replaceAll('-', '')
     def payloadPath = "payload-${env.BUILD_ID ?: 'local'}-${uuid}.json"
 
+    sh """
+    cat ${message}
+    echo '{
+        "body": ${groovy.json.JsonOutput.toJson(message)}
+    }' > ${payloadPath}
+    }
+    """
+
     withCredentials([string(credentialsId: token, variable: 'GH_TOKEN')]) {
+        def url = "https://api.github.com/repos/${repo}/issues/${pr}/comments"
         def authHeader = "Authorization: token ${GH_TOKEN}"
         try {
-            writeFile file: payloadPath, text: payload
             def resp = sh(script: "curl -s -X POST -H \"${authHeader}\" -H \"Content-Type: application/json\" --data-binary @${payloadPath} '${url}'", returnStdout: true).trim()
             echo "PR comment response: ${resp}"
             return resp
