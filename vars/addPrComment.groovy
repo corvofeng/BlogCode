@@ -46,11 +46,11 @@ def call(Map config = [:]) {
     def payloadPath = "payload-${env.BUILD_ID ?: 'local'}-${uuid}.json"
 
     sh """
-    cat ${message}
     echo '{
         "body": ${groovy.json.JsonOutput.toJson(message)}
     }' > ${payloadPath}
     }
+    cat ${payloadPath}
     """
 
     withCredentials([string(credentialsId: token, variable: 'GH_TOKEN')]) {
