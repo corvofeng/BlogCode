@@ -26,23 +26,6 @@ def call(Map config = [:]) {
     def pr = config.pr ?: env.CHANGE_ID
     def token = config.token ?: env.GIT_TOKEN
     def message = config.message ?: config.comment ?: ''
-    def messageFile = config.messageFile ?: ''
-
-    sh '''
-    pwd
-    ls -alh
-    '''
-    // If `messageFile` is provided, read its contents and use that as the message.
-    // `messageFile` takes precedence over `message`/`comment` when present.
-    if (messageFile) {
-        try {
-            message = readFile(messageFile)
-            echo "Read PR comment message from file '${messageFile}'."
-            echo message
-        } catch (err) {
-            error "Failed to read messageFile '${messageFile}': ${err}"
-        }
-    }
 
     if (!repo) {
         error 'Missing `repo` (owner/repo). Provide config.repo or env.GIT_REPO.'
