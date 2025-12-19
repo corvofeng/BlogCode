@@ -49,7 +49,6 @@ def call(Map config = [:]) {
     echo '{
         "body": ${groovy.json.JsonOutput.toJson(message)}
     }' > ${payloadPath}
-    cat ${payloadPath}
     """
 
     withCredentials([string(credentialsId: token, variable: 'GH_TOKEN')]) {
