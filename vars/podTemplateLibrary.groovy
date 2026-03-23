@@ -11,7 +11,7 @@ def call(image='jenkins/inbound-agent:rhel-ubi9-jdk25', Closure body) {
         ],
         containers: [
             // Used to connect with jenkins master
-            containerTemplate(args: '9999999', command: 'sleep', image: 'jenkins/jnlp-agent-docker:latest', name: 'agent', workingDir: '/home/jenkins/agent'),
+            containerTemplate(args: '9999999', command: 'sleep', image: 'jenkins/inbound-agent:rhel-ubi9-jdk25', name: 'agent', workingDir: '/home/jenkins/agent'),
 
             // Used for user to run their commands
             containerTemplate(name: 'runner', image: image, command: 'sleep', args: '99d')
