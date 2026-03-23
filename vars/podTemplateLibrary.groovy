@@ -1,7 +1,7 @@
 /* groovylint-disable MethodReturnTypeRequired */
 /* groovylint-disable MethodParameterTypeRequired */
 /* groovylint-disable-next-line NoDef */
-def call(image='jenkins/inbound-agent:rhel-ubi9-jdk25', Closure body) {
+def call(image='jenkins/jnlp-agent-docker:latest', Closure body) {
     podTemplate(
         agentContainer: 'agent',
         agentInjection: true,
