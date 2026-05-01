@@ -68,7 +68,19 @@ def call(Map config = [:]) {
 
                     api_url="https://api.github.com/repos/${repo}/issues/${changeId}/labels"
                     gh_labels_api() {
-                        curl -fsSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer \$GH_TOKEN" "\$api_url"
+                        body_file="`mktemp`"
+                        http_code="`curl -sSL -o "\$body_file" -w '%{http_code}' -H 'Accept: application/vnd.github+json' -H "Authorization: Bearer \$GH_TOKEN" "\$api_url"`"
+
+                        echo "[getPrLabels] GET \$api_url -> HTTP \$http_code" >&2
+                        if [ "\$http_code" != "200" ]; then
+                            echo "[getPrLabels] GitHub API returned non-200 response; response preview (first 40 lines):" >&2
+                            sed -n '1,40p' "\$body_file" >&2 || true
+                            rm -f "\$body_file"
+                            return 1
+                        fi
+
+                        cat "\$body_file"
+                        rm -f "\$body_file"
                     }
 
                     if command -v jq >/dev/null 2>&1; then
