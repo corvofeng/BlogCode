@@ -68,7 +68,7 @@ def call(Map config = [:]) {
 
                     api_url="https://api.github.com/repos/${repo}/issues/${changeId}/labels"
                     gh_labels_api() {
-                        curl -fsSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_TOKEN}" "${api_url}"
+                        curl -fsSL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer \$GH_TOKEN" "\$api_url"
                     }
 
                     if command -v jq >/dev/null 2>&1; then
