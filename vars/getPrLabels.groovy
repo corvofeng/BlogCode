@@ -33,39 +33,35 @@ def call(Map config = [:]) {
     String source = ''
 
     withCredentials([string(credentialsId: tokenCredentialId, variable: 'GH_TOKEN')]) {
-        String labelsRaw = sh(
+        def url = "https://api.github.com/repos/${repo}/issues/${changeId}/labels"
+        def authHeader = 'Authorization: Bearer $GH_TOKEN'
+        def acceptHeader = 'Accept: application/vnd.github+json'
+
+        echo "[getPrLabels] request: curl -sSL -H '${acceptHeader}' -H 'Authorization: Bearer ***' '${url}'"
+
+        String curlOutput = sh(
             returnStdout: true,
             script: """
                 set -euo pipefail
-
-                api_url="https://api.github.com/repos/${repo}/issues/${changeId}/labels"
-                gh_labels_api() {
-                    body_file="`mktemp`"
-                    debug_curl="curl -sSL -H 'Accept: application/vnd.github+json' -H 'Authorization: Bearer ***' '\$api_url'"
-                    echo "[getPrLabels] request: \$debug_curl" >&2
-                    http_code="`curl -sSL -o "\$body_file" -w '%{http_code}' -H 'Accept: application/vnd.github+json' -H "Authorization: Bearer \$GH_TOKEN" "\$api_url"`"
-
-                    echo "[getPrLabels] GET \$api_url -> HTTP \$http_code" >&2
-                    if [ "\$http_code" != "200" ]; then
-                        echo "[getPrLabels] GitHub API returned non-200 response; response preview (first 40 lines):" >&2
-                        sed -n '1,40p' "\$body_file" >&2 || true
-                        rm -f "\$body_file"
-                        return 1
-                    fi
-
-                    cat "\$body_file"
-                    rm -f "\$body_file"
-                }
-
-                if command -v jq >/dev/null 2>&1; then
-                    gh_labels_api | jq -r '.[].name // empty'
-                else
-                    gh_labels_api | sed -nE 's/.*"name"[[:space:]]*:[[:space:]]*"([^\"]*)".*/\1/p' || true
-                fi
+                curl -sSL -w '\n%{http_code}' -H "${acceptHeader}" -H "${authHeader}" '${url}'
             """.stripIndent().trim()
-        )
+        ).trim()
 
-        labels = labelsRaw ? labelsRaw.readLines() : []
+        List<String> outputLines = curlOutput.readLines()
+        String httpCode = outputLines ? outputLines[-1] : ''
+        String labelsJson = outputLines ? outputLines.dropRight(1).join('\n') : '[]'
+
+        echo "[getPrLabels] GET ${url} -> HTTP ${httpCode}"
+        echo "[getPrLabels] response: ${labelsJson}"
+        if (httpCode != '200') {
+            echo '[getPrLabels] GitHub API returned non-200 response'
+            error "Failed to fetch labels from GitHub API. HTTP ${httpCode}"
+        }
+
+        List parsedList = (new groovy.json.JsonSlurperClassic().parseText(labelsJson ?: '[]') ?: []) as List
+        labels = parsedList
+            .collect { item -> (item?.name ?: '').toString().trim() }
+            .findAll { name -> name }
         source = 'github-api'
     }
 
