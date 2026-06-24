@@ -17,6 +17,17 @@ def call(image, imageProxyPrefix, Closure body) {
 }
 
 /* groovylint-disable-next-line NoDef */
+def call(Map config) {
+    def body = config.body
+    if (!(body instanceof Closure)) {
+        throw new IllegalArgumentException('podTemplateLibrary requires a body closure')
+    }
+
+    def podConfig = config.findAll { key, _ -> key != 'body' }
+    call(podConfig, body)
+}
+
+/* groovylint-disable-next-line NoDef */
 def call(Map config, Closure body) {
     def imageProxyPrefix = config.imageProxyPrefix ?: config.registryPrefix ?: ''
     def runnerImage = withImageProxyPrefix(config.image ?: 'jenkins/jnlp-agent-docker:latest', imageProxyPrefix)
