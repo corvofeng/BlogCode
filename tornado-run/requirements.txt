@@ -1,4 +1,4 @@
-bottle==0.12.16
+bottle==0.12.20
 Click==7.0
 Django==2.2.13
 Flask==1.0.2
